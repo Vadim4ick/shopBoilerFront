@@ -53,6 +53,8 @@ const CatalogPage = () => {
     $filtredBoilerPart,
   ])
 
+  console.log(boilerParts)
+
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const params = new URLSearchParams(searchParams.toString())

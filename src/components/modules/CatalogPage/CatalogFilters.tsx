@@ -72,20 +72,19 @@ const CatalogFilters = ({
     updatedParams: T,
     path: string
   ) {
-    // router.push(pathname + '?' + `first=cheap`)
+    // const initialPage = currentPage > 0 ? 0 : currentPage
 
-    // createURLParams({
-    //   ...updatedParams,
-    // })
+    router.push(pathname + '?' + `first=cheap`)
 
-    console.log(updatedParams)
-    console.log(path)
+    createURLParams({
+      ...updatedParams,
+    })
 
-    // const data = await GetBestselleresOrNewPartsFx(
-    //   `/boiler-parts?limit=20&offset=${path}`
-    // )
+    const data = await GetBestselleresOrNewPartsFx(
+      `/boiler-parts?limit=20&offset=${path}`
+    )
 
-    // setFiltredBoilerPart(data)
+    setFiltredBoilerPart(data)
   }
 
   const applyFiltersFromQuery = async () => {
@@ -210,105 +209,74 @@ const CatalogFilters = ({
           },
           `${initialPage}${priceQuery}${boilerQuery}${partsQuery}`
         )
-        createURLParams({
-          boiler: encodedBoilerQuery,
-          parts: encodedPartsQuery,
-          priceFrom,
-          priceTo,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${priceQuery}${boilerQuery}${partsQuery}`
-        )
-
-        setFiltredBoilerPart(data)
 
         return
       }
       if (isPriceRangeChanged) {
-        createURLParams({
-          priceFrom,
-          priceTo,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${priceQuery}`
+        updateParamsAndFilter(
+          {
+            priceFrom,
+            priceTo,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${priceQuery}`
         )
-
-        setFiltredBoilerPart(data)
       }
 
       if (boilers.length && parts.length) {
-        createURLParams({
-          boiler: encodedBoilerQuery,
-          parts: encodedPartsQuery,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${boilerQuery}${partsQuery}`
+        updateParamsAndFilter(
+          {
+            boiler: encodedBoilerQuery,
+            parts: encodedPartsQuery,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${boilerQuery}${partsQuery}`
         )
-
-        setFiltredBoilerPart(data)
         return
       }
 
       if (boilers.length) {
-        createURLParams({
-          boiler: encodedBoilerQuery,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${boilerQuery}`
+        updateParamsAndFilter(
+          {
+            boiler: encodedBoilerQuery,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${boilerQuery}`
         )
-
-        setFiltredBoilerPart(data)
       }
 
       if (parts.length) {
-        createURLParams({
-          parts: encodedPartsQuery,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${partsQuery}`
+        updateParamsAndFilter(
+          {
+            parts: encodedPartsQuery,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${partsQuery}`
         )
-
-        setFiltredBoilerPart(data)
       }
 
       if (boilers.length && isPriceRangeChanged) {
-        createURLParams({
-          boiler: encodedBoilerQuery,
-          priceFrom,
-          priceTo,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${boilerQuery}${priceQuery}`
+        updateParamsAndFilter(
+          {
+            boiler: encodedBoilerQuery,
+            priceFrom,
+            priceTo,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${boilerQuery}${priceQuery}`
         )
-
-        setFiltredBoilerPart(data)
       }
 
       if (parts.length && isPriceRangeChanged) {
-        createURLParams({
-          parts: encodedPartsQuery,
-          priceFrom,
-          priceTo,
-          offset: initialPage + 1,
-        })
-
-        const data = await GetBestselleresOrNewPartsFx(
-          `/boiler-parts?limit=20&offset=${initialPage}${partsQuery}${priceQuery}`
+        updateParamsAndFilter(
+          {
+            parts: encodedPartsQuery,
+            priceFrom,
+            priceTo,
+            offset: initialPage + 1,
+          },
+          `${initialPage}${partsQuery}${priceQuery}`
         )
-
-        setFiltredBoilerPart(data)
       }
     } catch (error) {
       toast.error((error as Error).message)
