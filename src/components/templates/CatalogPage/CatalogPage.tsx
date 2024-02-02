@@ -27,6 +27,8 @@ import CatalogItem from '@/components/modules/CatalogPage/CatalogItem'
 import CatalogFilters from '@/components/modules/CatalogPage/CatalogFilters'
 import ReactPaginate from 'react-paginate'
 import FilterSelect from '@/components/modules/CatalogPage/FilterSelect'
+import { usePopup } from '@/hooks/usePopup'
+import { checkQueryParams } from '@/utils/catalog'
 
 const CatalogPage = () => {
   const [
@@ -52,8 +54,6 @@ const CatalogPage = () => {
     setPartManufacturersFx,
     $filtredBoilerPart,
   ])
-
-  console.log(boilerParts)
 
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -95,10 +95,7 @@ const CatalogPage = () => {
     isAnyBoilerManufacturerChecked ||
     isAnyPartsManufacturerChecked
   )
-  // const { toggleOpen, open, closePopup } = usePopup()
-
-  const closePopup = () => {}
-  const open = true
+  const { toggleOpen, open, closePopup } = usePopup()
 
   useEffect(() => {
     loadBoilerParts()
@@ -168,8 +165,9 @@ const CatalogPage = () => {
         return
       }
 
-      // const { isValidBoilerQuery, isValidPartsQuery, isValidPriceQuery } =
-      //   checkQueryParams(router)
+      const { isValidBoilerQuery, isValidPartsQuery, isValidPriceQuery } =
+        checkQueryParams(searchParams)
+
       const boilerQuery = params.get('boiler')
       const partsQuery = params.get('parts')
       const priceFromQuery = params.get('priceFrom')
@@ -177,9 +175,9 @@ const CatalogPage = () => {
 
       const result = await GetBestselleresOrNewPartsFx(
         `/boiler-parts?limit=20&offset=${selected}${
-          isFilterInQuery && boilerQuery ? `&boiler=${boilerQuery}` : ''
-        }${isFilterInQuery && partsQuery ? `&parts=${partsQuery}` : ''}${
-          isFilterInQuery && priceFromQuery && pricTOeQuery
+          isFilterInQuery && isValidBoilerQuery ? `&boiler=${boilerQuery}` : ''
+        }${isFilterInQuery && isValidPartsQuery ? `&parts=${partsQuery}` : ''}${
+          isFilterInQuery && isValidPriceQuery && pricTOeQuery
             ? `&priceFrom=${priceFromQuery}&priceTo=${pricTOeQuery}`
             : ''
         }`
@@ -253,7 +251,7 @@ const CatalogPage = () => {
             </button>
             <button
               className={styles.catalog__top__mobile_btn}
-              // onClick={toggleOpen}
+              onClick={toggleOpen}
             >
               <span className={styles.catalog__top__mobile_btn__svg}>
                 <FilterSvg />

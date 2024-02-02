@@ -4,15 +4,17 @@ import { ICatalogFiltersProps } from '@/types/catalog'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { getQueryParamOnFirstRender } from '@/utils/common'
 import CatalogFiltersMobile from './CatalogFiltersMobile'
 import { useUnit } from 'effector-react'
 import {
   $boilerManufacturers,
   $partManufacturers,
+  setBoilerManufacturersFromQuery as setBoilerManufacturersFromQueryFx,
   setFiltredBoilerPart as setFiltredBoilerPartFx,
+  setPartManufacturersFromQuery as setPartManufacturersFromQueryFx,
 } from '@/context/boiler-parts'
 import { GetBestselleresOrNewPartsFx } from '@/api/boilerParts/boilerParts'
+import { checkQueryParams } from '@/utils/catalog'
 
 interface NewParams {
   boiler: string
@@ -36,8 +38,19 @@ const CatalogFilters = ({
 }: ICatalogFiltersProps) => {
   const isMobile = useMedia('(max-width: 820px)')
   const [spinner, setSpinner] = useState(false)
-  const [boilerManufacturers, partsManufacturers, setFiltredBoilerPart] =
-    useUnit([$boilerManufacturers, $partManufacturers, setFiltredBoilerPartFx])
+  const [
+    boilerManufacturers,
+    partsManufacturers,
+    setFiltredBoilerPart,
+    setBoilerManufacturersFromQuery,
+    setPartManufacturersFromQuery,
+  ] = useUnit([
+    $boilerManufacturers,
+    $partManufacturers,
+    setFiltredBoilerPartFx,
+    setBoilerManufacturersFromQueryFx,
+    setPartManufacturersFromQueryFx,
+  ])
 
   // const router = useRouter()
   const router = useRouter()
@@ -87,79 +100,82 @@ const CatalogFilters = ({
     setFiltredBoilerPart(data)
   }
 
+  const updateParamsAndFiltersFromQuery = async (
+    callback: VoidFunction,
+    path: string
+  ) => {
+    callback()
+
+    const data = await GetBestselleresOrNewPartsFx(
+      `/boiler-parts?limit=20&offset=${path}`
+    )
+
+    setFiltredBoilerPart(data)
+  }
+
   const applyFiltersFromQuery = async () => {
     try {
-      const priceFromQueryValue = searchParams.get('priceFrom')
-      const priceToQueryValue = searchParams.get('priceTo')
-      const boilerQueryValue = JSON.parse(
-        decodeURIComponent(searchParams.get('boiler') as string)
-      )
-      const partsQueryValue = JSON.parse(
-        decodeURIComponent(searchParams.get('parts') as string)
-      )
+      const {
+        boilerQueryValue,
+        isValidBoilerQuery,
+        isValidPartsQuery,
+        isValidPriceQuery,
+        partsQueryValue,
+        priceFromQueryValue,
+        priceToQueryValue,
+      } = checkQueryParams(searchParams)
 
-      const isValidBoilerQuery =
-        Array.isArray(boilerQueryValue) && Boolean(boilerQueryValue?.length)
-      const isValidPartsQuery =
-        Array.isArray(partsQueryValue) && Boolean(partsQueryValue?.length)
-      // const {
-      //   isValidBoilerQuery,
-      //   isValidPartsQuery,
-      //   isValidPriceQuery,
-      //   partsQueryValue,
-      //   priceFromQueryValue,
-      //   boilerQueryValue,
-      //   priceToQueryValue,
-      // } = checkQueryParams(router)
       const boilerQuery = `&boiler=${searchParams.get('boiler')}`
       const partsQuery = `&parts=${searchParams.get('parts')}`
       const priceQuery = `&priceFrom=${priceFromQueryValue}&priceTo=${priceToQueryValue}`
 
-      // if (isValidBoilerQuery && isValidPartsQuery && isValidPriceQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
-      //     setBoilerManufacturersFromQuery(boilerQueryValue)
-      //     setPartsManufacturersFromQuery(partsQueryValue)
-      //   }, `${currentPage}${priceQuery}${boilerQuery}${partsQuery}`)
-      //   return
-      // }
-      // if (isValidPriceQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
-      //   }, `${currentPage}${priceQuery}`)
-      // }
-      // if (isValidBoilerQuery && isValidPartsQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     setIsFilterInQuery(true)
-      //     setBoilerManufacturersFromQuery(boilerQueryValue)
-      //     setPartsManufacturersFromQuery(partsQueryValue)
-      //   }, `${currentPage}${boilerQuery}${partsQuery}`)
-      //   return
-      // }
-      // if (isValidBoilerQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     setIsFilterInQuery(true)
-      //     setBoilerManufacturersFromQuery(boilerQueryValue)
-      //   }, `${currentPage}${boilerQuery}`)
-      // }
-      // if (isValidPartsQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     setIsFilterInQuery(true)
-      //     setPartsManufacturersFromQuery(partsQueryValue)
-      //   }, `${currentPage}${partsQuery}`)
-      // }
-      // if (isValidPartsQuery && isValidPriceQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
-      //     setPartsManufacturersFromQuery(partsQueryValue)
-      //   }, `${currentPage}${priceQuery}${partsQuery}`)
-      // }
-      // if (isValidBoilerQuery && isValidPriceQuery) {
-      //   updateParamsAndFiltersFromQuery(() => {
-      //     updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
-      //     setBoilerManufacturersFromQuery(boilerQueryValue)
-      //   }, `${currentPage}${priceQuery}${boilerQuery}`)
-      // }
+      if (isValidBoilerQuery && isValidPartsQuery && isValidPriceQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
+          setBoilerManufacturersFromQuery(boilerQueryValue)
+          setPartManufacturersFromQuery(partsQueryValue)
+        }, `${currentPage}${priceQuery}${boilerQuery}${partsQuery}`)
+        return
+      }
+
+      if (isValidPriceQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
+        }, `${currentPage}${priceQuery}`)
+      }
+
+      if (isValidBoilerQuery && isValidPartsQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          setIsFilterInQuery(true)
+          setBoilerManufacturersFromQuery(boilerQueryValue)
+          setPartManufacturersFromQuery(partsQueryValue)
+        }, `${currentPage}${boilerQuery}${partsQuery}`)
+        return
+      }
+      if (isValidBoilerQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          setIsFilterInQuery(true)
+          setBoilerManufacturersFromQuery(boilerQueryValue)
+        }, `${currentPage}${boilerQuery}`)
+      }
+      if (isValidPartsQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          setIsFilterInQuery(true)
+          setPartManufacturersFromQuery(partsQueryValue)
+        }, `${currentPage}${partsQuery}`)
+      }
+      if (isValidPartsQuery && isValidPriceQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
+          setPartManufacturersFromQuery(partsQueryValue)
+        }, `${currentPage}${priceQuery}${partsQuery}`)
+      }
+      if (isValidBoilerQuery && isValidPriceQuery) {
+        updateParamsAndFiltersFromQuery(() => {
+          updatePriceFromQuery(+priceFromQueryValue, +priceToQueryValue)
+          setBoilerManufacturersFromQuery(boilerQueryValue)
+        }, `${currentPage}${priceQuery}${boilerQuery}`)
+      }
     } catch (error) {
       const err = error as Error
       if (err.message === 'URI malformed') {
