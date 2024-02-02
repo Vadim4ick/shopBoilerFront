@@ -1,7 +1,9 @@
+import DashboardPage from '@/components/templates/DashboardPage/DashboardPage'
+
 const PageDashboard = () => {
   return (
     <>
-      <div>dashboard</div>
+      <DashboardPage />
       <div className="overlay"></div>
     </>
   )

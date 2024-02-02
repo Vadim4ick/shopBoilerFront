@@ -10,15 +10,18 @@ import styles from '@/styles/cartPopup/index.module.scss'
 import { formatPrice } from '@/utils/common'
 import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
-import { $shoppingCart } from '@/context/shopping-cart'
+import { $shoppingCart, setShoppingCart } from '@/context/shopping-cart'
+import { $user } from '@/context/user'
 
 const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
   ({ open, setOpen }, ref) => {
-    const [mode, shoppingCart] = useUnit([$mode, $shoppingCart])
-    // const user = useStore($user)
+    const [mode, shoppingCart, user, setShoppingCartFx] = useUnit([
+      $mode,
+      $shoppingCart,
+      $user,
+      setShoppingCart,
+    ])
     // const totalPrice = useStore($totalPrice)
-    // const disableCart = useStore($disableCart)
-    // const shoppingCart = useStore($shoppingCart)
     const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
     const disableCart = false
@@ -39,6 +42,16 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
     //     )
     //   )
     // }, [shoppingCart])
+
+    // const loadCartItems = async () => {
+    //   try {
+    //     const cartItems = await getCartItemsFx(`/shopping-cart/${user.userId}`)
+
+    //     setShoppingCartFx(cartItems)
+    //   } catch (error) {
+    //     toast.error((error as Error).message)
+    //   }
+    // }
 
     return (
       <div className={styles.cart} ref={ref}>

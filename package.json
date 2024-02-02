@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@effector/next": "^0.7.0",
+    "@types/nookies": "^2.0.3",
+    "@types/react-slick": "^0.23.13",
     "@typescript-eslint/typescript-estree": "^6.19.1",
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
@@ -20,13 +22,20 @@
     "eslint-plugin-prettier": "^4.2.1",
     "framer-motion": "^11.0.3",
     "next": "14.1.0",
+    "nextjs-progressbar": "^0.0.16",
+    "nextjs-toploader": "^1.6.4",
+    "nookies": "^2.5.2",
     "prettier": "^2.8.7",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.49.3",
+    "react-paginate": "^8.2.0",
+    "react-range": "^1.8.14",
     "react-select": "^5.8.0",
+    "react-slick": "^0.30.1",
     "react-toastify": "^10.0.4",
-    "sass": "^1.70.0"
+    "sass": "^1.70.0",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -1,28 +1,37 @@
-import { forwardRef } from 'react'
+import { forwardRef, useEffect } from 'react'
 import ProfileSvg from '@/components/elements/ProfileSvg/ProfileSvg'
 import { $mode } from '@/context/mode'
 
 import LogoutSvg from '@/components/elements/LogoutSvg/LogoutSvg'
 import { withClickOutside } from '../../../utils/withClickOutside'
 import styles from '@/styles/profileDropDown/index.module.scss'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { $user, setUser } from '@/context/user'
+import nookies from 'nookies'
+import { logoutFx } from '@/api/auth/auth'
 
 const ProfileDropDown = forwardRef<HTMLDivElement, IWrapperComponentProps>(
   ({ open, setOpen }, ref) => {
-    // const user = useStore($user)
-    // const router = useRouter()
-    const [mode] = useUnit([$mode])
+    const router = useRouter()
+    const [mode, user, setUserFn] = useUnit([$mode, $user, setUser])
     const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
+
+    useEffect(() => {
+      if (nookies.get().user) {
+        const data = JSON.parse(nookies.get().user)
+        setUserFn(data)
+      }
+    }, [])
 
     const toggleProfileDropDown = () => setOpen(!open)
 
-    // const handleLogout = async () => {
-    //   await logoutFx('/users/logout')
-    //   router.push('/')
-    // }
+    const handleLogout = async () => {
+      await logoutFx('/users/logout')
+      router.push('/')
+    }
 
     return (
       <div className={styles.profile} ref={ref}>
@@ -45,20 +54,18 @@ const ProfileDropDown = forwardRef<HTMLDivElement, IWrapperComponentProps>(
                 <span
                   className={`${styles.profile__dropdown__username} ${darkModeClass}`}
                 >
-                  {/* {user.username} */}
-                  Vadim
+                  {user.username}
                 </span>
                 <span
                   className={`${styles.profile__dropdown__email} ${darkModeClass}`}
                 >
-                  {/* {user.email} */}
-                  Vadim@mail.ru
+                  {user.email}
                 </span>
               </li>
               <li className={styles.profile__dropdown__item}>
                 <button
                   className={styles.profile__dropdown__item__btn}
-                  // onClick={handleLogout}
+                  onClick={handleLogout}
                 >
                   <span
                     className={`${styles.profile__dropdown__item__text} ${darkModeClass}`}

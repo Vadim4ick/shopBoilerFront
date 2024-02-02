@@ -4,10 +4,7 @@ import { EffectorNext } from '@effector/next'
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
-import Header from '@/components/modules/Header/Header'
-import Footer from '@/components/modules/Footer/Footer'
-
-// const enhance = withHydrate()
+import NextTopLoader from 'nextjs-toploader'
 
 export const metadata: Metadata = {
   title: {
@@ -33,10 +30,11 @@ function RootLayout({
     <>
       <html lang="en">
         <body>
-          <Header />
+          <NextTopLoader height={50} showSpinner={false} color="green" />
+
           <EffectorNext>{children}</EffectorNext>
+
           <ToastContainer />
-          <Footer />
         </body>
       </html>
     </>
