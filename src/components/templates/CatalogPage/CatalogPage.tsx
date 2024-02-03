@@ -108,11 +108,16 @@ const CatalogPage = () => {
         '/boiler-parts?limit=20&offset=0'
       )
 
+      console.log('isValidOffset', !isValidOffset)
+
       if (!isValidOffset) {
         router.push(pathname + '?' + createQueryString('offset', 1))
         resetPagination(data)
         return
       }
+
+      console.log('filteredBoilerParts', filteredBoilerParts)
+      console.log('isFilterInQuery', isFilterInQuery)
 
       if (isValidOffset) {
         if (+firstParam > Math.ceil(data.count / 20)) {
@@ -200,7 +205,7 @@ const CatalogPage = () => {
         '/boiler-parts?limit=20&offset=0'
       )
 
-      router.push(pathname + '?' + `first=cheap`)
+      router.push(pathname + '?' + `first=cheap&offset=1`)
 
       setBoilerManufacturers(
         boilerManufacturers.map((item) => ({ ...item, checked: false }))
@@ -208,7 +213,7 @@ const CatalogPage = () => {
       setPartManufacturers(
         partsManufacturers.map((item) => ({ ...item, checked: false }))
       )
-      setBoilerParts(data)
+      setBoilerPartsFx(data)
       setPriceRange([1000, 9000])
       setIsPriceRangeChanged(false)
     } catch (error) {

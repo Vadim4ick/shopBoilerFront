@@ -14,14 +14,16 @@ export const setPartManufacturers = createEvent<IFilterCheckboxItem[]>()
 export const setBoilerManufacturersFromQuery = createEvent<string[]>()
 export const setPartManufacturersFromQuery = createEvent<string[]>()
 
-export const setFiltredBoilerPart = createEvent<IBoilerParts>()
+export const setFiltredBoilerPart = createEvent<IBoilerParts[]>()
 
 export const updateBoilerManufacturers = createEvent<IFilterCheckboxItem>()
 export const updatePartManufacturers = createEvent<IFilterCheckboxItem>()
 
 export const $boilerParts = createStore<IBoilerParts>({} as IBoilerParts)
 
-export const $filtredBoilerPart = createStore<IBoilerParts>({} as IBoilerParts)
+export const $filtredBoilerPart = createStore<IBoilerParts[]>(
+  [] as IBoilerParts[]
+)
 
 export const $boilerManufacturers = createStore<IFilterCheckboxItem[]>(
   boilerManufacturers as IFilterCheckboxItem[]
