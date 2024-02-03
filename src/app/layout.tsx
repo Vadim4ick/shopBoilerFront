@@ -5,6 +5,7 @@ import './globals.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import NextTopLoader from 'nextjs-toploader'
+import { MainLayout } from '@/layout/MainLayout'
 
 export const metadata: Metadata = {
   title: {
@@ -30,11 +31,13 @@ function RootLayout({
     <>
       <html lang="en">
         <body>
-          <NextTopLoader height={50} showSpinner={false} color="green" />
+          <MainLayout>
+            <NextTopLoader height={50} showSpinner={false} color="green" />
 
-          <EffectorNext>{children}</EffectorNext>
+            <EffectorNext>{children}</EffectorNext>
 
-          <ToastContainer />
+            <ToastContainer />
+          </MainLayout>
         </body>
       </html>
     </>
