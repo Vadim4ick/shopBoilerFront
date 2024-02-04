@@ -1,5 +1,6 @@
 import { PartPage } from '@/components/templates/PartPage/PartPage'
 import { cookies } from 'next/headers'
+import { notFound } from 'next/navigation'
 
 export async function generateMetadata({
   params,
@@ -8,20 +9,20 @@ export async function generateMetadata({
 }) {
   const id = params.partId
 
-  try {
-    const res = await fetch(`http://localhost:3001/api/boilerPart?id=${id}`, {
-      credentials: 'include',
-      method: 'GET',
-      headers: {
-        Cookie: `connect.sid=${cookies().get('connect.sid')?.value}`,
-      },
-    }).then((res) => res.json())
+  const res = await fetch(`http://localhost:3001/api/boilerPart?id=${id}`, {
+    credentials: 'include',
+    method: 'GET',
+    headers: {
+      Cookie: `connect.sid=${cookies().get('connect.sid')?.value}`,
+    },
+  }).then((res) => res.json())
 
-    return {
-      title: res.name,
-    }
-  } catch (error) {
-    console.log('err', error)
+  if (!res.name) {
+    return notFound()
+  }
+
+  return {
+    title: res.name,
   }
 }
 
