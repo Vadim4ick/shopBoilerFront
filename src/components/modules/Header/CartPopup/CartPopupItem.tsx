@@ -1,22 +1,33 @@
-/* eslint-disable @next/next/no-img-element */
 import { $mode } from '@/context/mode'
-import { useStore } from 'effector-react'
 import Link from 'next/link'
 import DeleteSvg from '@/components/elements/DeleteSvg/DeleteSvg'
 import { IShoppingCartItem } from '../../../../types/shopping-cart'
 import { formatPrice } from '@/utils/common'
 import CartItemCounter from '@/components/elements/CartItemCounter/CartItemCounter'
-import { usePrice } from '@/hooks/usePrice'
+// import { usePrice } from '@/hooks/usePrice'
 import styles from '@/styles/cartPopup/index.module.scss'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
+import { useUnit } from 'effector-react'
+import { removeItemFromCart } from '@/utils/shopping-cart'
+import { useState } from 'react'
+import { removeShoppingCartItem } from '@/context/shopping-cart'
 
 const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
-  const mode = useStore($mode)
+  const [mode, removeShoppingCartItemFx] = useUnit([
+    $mode,
+    removeShoppingCartItem,
+  ])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
+  const [spinner, setSpinner] = useState(false)
+
   const spinnerDarkModeClass =
     mode === 'dark' ? '' : `${spinnerStyles.dark_mode}`
-  const { price, spinner, decreasePrice, deleteCartItem, increasePrice } =
-    usePrice(item.count, item.partId, item.price)
+
+  const deleteCartItem = () =>
+    removeItemFromCart(item.partId, setSpinner, removeShoppingCartItemFx)
+
+  // const { price, spinner, decreasePrice, deleteCartItem, increasePrice } =
+  //   usePrice(item.count, item.partId, item.price)
 
   return (
     <li className={styles.cart__popup__list__item}>
@@ -29,7 +40,7 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
             className={`${styles.cart__popup__list__item__text} ${darkModeClass}`}
           >
             <span>
-              {item.name.replace('.', '')}, {item.parts_manufacturer},{' '}
+              {item.name.replace('.', '')}, {item.parts_manufacturer},
               {item.boiler_manufacturer}
             </span>
           </a>
@@ -48,7 +59,7 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
         </button>
       </div>
       <div className={styles.cart__popup__list__item__bottom}>
-        {item.in_stock === 0 ? (
+        {/* {item.in_stock === 0 ? (
           <span className={styles.cart__popup__list__item__empty}>
             Нет на складе
           </span>
@@ -60,11 +71,17 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
             increasePrice={increasePrice}
             decreasePrice={decreasePrice}
           />
+        )} */}
+
+        {item.in_stock === 0 && (
+          <span className={styles.cart__popup__list__item__empty}>
+            Нет на складе
+          </span>
         )}
         <span
           className={`${styles.cart__popup__list__item__price} ${darkModeClass}`}
         >
-          {formatPrice(price)} P
+          {formatPrice(item.price)} P
         </span>
       </div>
     </li>

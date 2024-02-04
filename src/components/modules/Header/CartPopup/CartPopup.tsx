@@ -12,6 +12,7 @@ import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
 import { $shoppingCart, setShoppingCart } from '@/context/shopping-cart'
 import { $user } from '@/context/user'
+import { GetCartItemFx } from '@/api/shopping-cart/shopping-cart'
 
 const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
   ({ open, setOpen }, ref) => {
@@ -30,9 +31,11 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
       setOpen(!open)
     }
 
-    // useEffect(() => {
-    //   loadCartItems()
-    // }, [])
+    useEffect(() => {
+      if (user.userId) {
+        loadCartItems()
+      }
+    }, [user])
 
     // useEffect(() => {
     //   setTotalPrice(
@@ -43,15 +46,15 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
     //   )
     // }, [shoppingCart])
 
-    // const loadCartItems = async () => {
-    //   try {
-    //     const cartItems = await getCartItemsFx(`/shopping-cart/${user.userId}`)
+    const loadCartItems = async () => {
+      try {
+        const cartItems = await GetCartItemFx(`/shopping-cart/${user.userId}`)
 
-    //     setShoppingCartFx(cartItems)
-    //   } catch (error) {
-    //     toast.error((error as Error).message)
-    //   }
-    // }
+        setShoppingCartFx(cartItems)
+      } catch (error) {
+        toast.error((error as Error).message)
+      }
+    }
 
     return (
       <div className={styles.cart} ref={ref}>
@@ -94,8 +97,7 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
               <ul className={styles.cart__popup__list}>
                 {shoppingCart.length ? (
                   shoppingCart.map((item) => (
-                    <div></div>
-                    // <CartPopupItem key={item.id} item={item} />
+                    <CartPopupItem key={item.id} item={item} />
                   ))
                 ) : (
                   <li className={styles.cart__popup__empty}>

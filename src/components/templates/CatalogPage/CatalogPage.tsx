@@ -108,16 +108,11 @@ const CatalogPage = () => {
         '/boiler-parts?limit=20&offset=0'
       )
 
-      console.log('isValidOffset', !isValidOffset)
-
       if (!isValidOffset) {
         router.push(pathname + '?' + createQueryString('offset', 1))
         resetPagination(data)
         return
       }
-
-      console.log('filteredBoilerParts', filteredBoilerParts)
-      console.log('isFilterInQuery', isFilterInQuery)
 
       if (isValidOffset) {
         if (+firstParam > Math.ceil(data.count / 20)) {

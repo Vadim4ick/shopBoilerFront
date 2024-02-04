@@ -31,13 +31,13 @@ function RootLayout({
     <>
       <html lang="en">
         <body>
-          <MainLayout>
-            <NextTopLoader height={50} showSpinner={false} color="green" />
+          <NextTopLoader height={50} showSpinner={false} color="green" />
 
-            <EffectorNext>{children}</EffectorNext>
+          <EffectorNext>
+            <MainLayout>{children}</MainLayout>
+          </EffectorNext>
 
-            <ToastContainer />
-          </MainLayout>
+          <ToastContainer />
         </body>
       </html>
     </>

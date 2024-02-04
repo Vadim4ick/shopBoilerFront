@@ -10,8 +10,8 @@ import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { $user, setUser } from '@/context/user'
-import nookies from 'nookies'
 import { logoutFx } from '@/api/auth/auth'
+import nookies from 'nookies'
 
 const ProfileDropDown = forwardRef<HTMLDivElement, IWrapperComponentProps>(
   ({ open, setOpen }, ref) => {
