@@ -1,5 +1,7 @@
 import { ReadonlyURLSearchParams } from 'next/navigation'
 import { idGenerator } from './common'
+import { UpdateCartItemFx } from '@/api/shopping-cart/shopping-cart'
+import { updateCartItemTotalPrice } from '@/context/shopping-cart'
 
 const createManufacturerCheckboxObj = (title: string) => ({
   title,

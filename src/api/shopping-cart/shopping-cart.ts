@@ -1,4 +1,4 @@
-import { IAddToCartFx } from './../../types/shopping-cart'
+import { IAddToCartFx, IUpdateCartItemFx } from './../../types/shopping-cart'
 import { createEffect } from 'effector'
 import { $api } from '../api'
 
@@ -19,3 +19,11 @@ export const AddToCartItemFx = createEffect(
 export const RemoveFromCartItemFx = createEffect(async (url: string) => {
   await $api.delete(url)
 })
+
+export const UpdateCartItemFx = createEffect(
+  async ({ url, payload }: IUpdateCartItemFx) => {
+    const { data } = await $api.patch(url, payload)
+
+    return data
+  }
+)

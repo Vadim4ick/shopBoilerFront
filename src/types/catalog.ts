@@ -30,7 +30,6 @@ export interface IFilterManufacturerAccordionProps {
   manufacturersList: IFilterCheckboxItem[]
   title: string | false
   setManufacturer: (payload: IFilterCheckboxItem[]) => IFilterCheckboxItem[]
-  // updateManufacturer: Event<IFilterCheckboxItem>
   updateManufacturer: (payload: IFilterCheckboxItem) => IFilterCheckboxItem
 }
 

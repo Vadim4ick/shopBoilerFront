@@ -10,19 +10,33 @@ import styles from '@/styles/cartPopup/index.module.scss'
 import { formatPrice } from '@/utils/common'
 import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
-import { $shoppingCart, setShoppingCart } from '@/context/shopping-cart'
+import {
+  $shoppingCart,
+  $totalPrice,
+  setShoppingCart,
+  setTotalPrice,
+} from '@/context/shopping-cart'
 import { $user } from '@/context/user'
 import { GetCartItemFx } from '@/api/shopping-cart/shopping-cart'
 
 const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
   ({ open, setOpen }, ref) => {
-    const [mode, shoppingCart, user, setShoppingCartFx] = useUnit([
+    const [
+      mode,
+      shoppingCart,
+      user,
+      setShoppingCartFx,
+      setTotalPriceFx,
+      totalPrice,
+    ] = useUnit([
       $mode,
       $shoppingCart,
       $user,
       setShoppingCart,
+      setTotalPrice,
+      $totalPrice,
     ])
-    // const totalPrice = useStore($totalPrice)
+
     const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
     const disableCart = false
@@ -37,14 +51,14 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
       }
     }, [user])
 
-    // useEffect(() => {
-    //   setTotalPrice(
-    //     shoppingCart.reduce(
-    //       (defaultCount, item) => defaultCount + item.total_price,
-    //       0
-    //     )
-    //   )
-    // }, [shoppingCart])
+    useEffect(() => {
+      setTotalPriceFx(
+        shoppingCart.reduce(
+          (defaultCount, item) => defaultCount + item.totalPrice,
+          0
+        )
+      )
+    }, [shoppingCart])
 
     const loadCartItems = async () => {
       try {
@@ -117,7 +131,7 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
                     Общая сумма заказа:
                   </span>
                   <span className={styles.cart__popup__footer__price}>
-                    {/* {formatPrice(totalPrice)} P */}
+                    {formatPrice(totalPrice)} P
                   </span>
                 </div>
                 <Link href="/order" passHref legacyBehavior>

@@ -7,7 +7,7 @@ export interface IShoppingCartItem {
   parts_manufacturer: string
   boiler_manufacturer: string
   count: number
-  total_price: number
+  totalPrice: number
   userId: number
   partId: number
 }
@@ -21,7 +21,7 @@ export interface IAddToCartFx {
 export interface IUpdateCartItemFx {
   url: string
   payload: {
-    total_price?: number
+    totalPrice?: number
     count?: number
   }
 }

@@ -1,6 +1,7 @@
 import {
   AddToCartItemFx,
   RemoveFromCartItemFx,
+  UpdateCartItemFx,
 } from '@/api/shopping-cart/shopping-cart'
 import { IShoppingCartItem } from '@/types/shopping-cart'
 import { toast } from 'react-toastify'
@@ -51,4 +52,25 @@ export const removeItemFromCart = async (
   } finally {
     setSpinner(false)
   }
+}
+
+export const updateTotalPrice = async (
+  totalPrice: number,
+  partId: number,
+  updateCartItemTotalPrice: (payload: {
+    partId: number
+    totalPrice: number
+  }) => {
+    partId: number
+    totalPrice: number
+  }
+) => {
+  const data = await UpdateCartItemFx({
+    url: `/shopping-cart/total-price/${partId}`,
+    payload: {
+      totalPrice,
+    },
+  })
+
+  updateCartItemTotalPrice({ partId, totalPrice: data.totalPrice })
 }

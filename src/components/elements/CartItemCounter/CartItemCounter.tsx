@@ -1,14 +1,14 @@
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { useStore } from 'effector-react'
 import { ICartItemCounterProps } from '@/types/shopping-cart'
 import MinusSvg from '../MinusSvg/MinusSvg'
 import PlusSvg from '../PlusSvg/PlusSvg'
 import { $mode } from '@/context/mode'
-import { updateCartItemFx } from '@/app/api/shopping-cart'
-import { updateCartItemCount } from '@/context/shopping-cart'
 import styles from '@/styles/cartPopup/index.module.scss'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
+import { useUnit } from 'effector-react'
+import { UpdateCartItemFx } from '@/api/shopping-cart/shopping-cart'
+import { updateCartItemCount as updateCartItemCountFx } from '@/context/shopping-cart'
 
 const CartItemCounter = ({
   totalCount,
@@ -17,8 +17,9 @@ const CartItemCounter = ({
   decreasePrice,
   initialCount,
 }: ICartItemCounterProps) => {
-  const mode = useStore($mode)
+  const [mode, updateCartItemCount] = useUnit([$mode, updateCartItemCountFx])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
+
   const spinnerDarkModeClass =
     mode === 'dark' ? '' : `${spinnerStyles.dark_mode}`
   const [spinner, setPinner] = useState(false)
@@ -43,7 +44,7 @@ const CartItemCounter = ({
       setDisableDecrease(false)
       setCount(count + 1)
 
-      const data = await updateCartItemFx({
+      const data = await UpdateCartItemFx({
         url: `/shopping-cart/count/${partId}`,
         payload: { count: count + 1 },
       })
@@ -63,7 +64,7 @@ const CartItemCounter = ({
       setDisableIncrease(false)
       setCount(count - 1)
 
-      const data = await updateCartItemFx({
+      const data = await UpdateCartItemFx({
         url: `/shopping-cart/count/${partId}`,
         payload: { count: count - 1 },
       })

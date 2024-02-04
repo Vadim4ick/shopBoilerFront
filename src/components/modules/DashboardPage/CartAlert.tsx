@@ -3,12 +3,11 @@ import { useUnit } from 'effector-react'
 import { formatPrice } from '@/utils/common'
 import { ICartAlertProps } from '../../../types/dashboard'
 import { $mode } from '@/context/mode'
-// import { $totalPrice } from '@/context/shopping-cart'
 import styles from '@/styles/dashboard/index.module.scss'
+import { $totalPrice } from '@/context/shopping-cart'
 
 const CartAlert = ({ count, closeAlert }: ICartAlertProps) => {
-  const [mode] = useUnit([$mode])
-  // const totalPrice = useStore($totalPrice)
+  const [mode, totalPrice] = useUnit([$mode, $totalPrice])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
   const showCountMessage = (count: string) => {
@@ -29,10 +28,7 @@ const CartAlert = ({ count, closeAlert }: ICartAlertProps) => {
         <span>
           В корзине {count} {showCountMessage(`${count}`)}
         </span>
-        <span>
-          На сумму
-          {/* {formatPrice(totalPrice)} */}P
-        </span>
+        <span>На сумму {formatPrice(totalPrice)}P</span>
       </div>
       <div className={styles.dashboard__alert__right}>
         <Link href="/order" legacyBehavior passHref>

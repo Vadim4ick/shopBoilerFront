@@ -9,19 +9,38 @@ import styles from '@/styles/cartPopup/index.module.scss'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
 import { useUnit } from 'effector-react'
 import { removeItemFromCart } from '@/utils/shopping-cart'
-import { useState } from 'react'
-import { removeShoppingCartItem } from '@/context/shopping-cart'
+import { useEffect, useState } from 'react'
+import {
+  removeShoppingCartItem,
+  updateCartItemTotalPrice as updateCartItemTotalPriceFx,
+} from '@/context/shopping-cart'
+import { updateTotalPrice } from '@/utils/shopping-cart'
 
 const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
-  const [mode, removeShoppingCartItemFx] = useUnit([
+  const [mode, removeShoppingCartItemFx, updateCartItemTotalPrice] = useUnit([
     $mode,
     removeShoppingCartItem,
+    updateCartItemTotalPriceFx,
   ])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
   const [spinner, setSpinner] = useState(false)
+  const [price, setPrice] = useState(item.price)
 
   const spinnerDarkModeClass =
     mode === 'dark' ? '' : `${spinnerStyles.dark_mode}`
+
+  const incPrice = () => {
+    setPrice(price + item.price)
+  }
+  const decPrice = () => setPrice(price - item.price)
+
+  useEffect(() => {
+    setPrice(price * item.count)
+  }, [])
+
+  useEffect(() => {
+    updateTotalPrice(price, item.partId, updateCartItemTotalPrice)
+  }, [price])
 
   const deleteCartItem = () =>
     removeItemFromCart(item.partId, setSpinner, removeShoppingCartItemFx)
@@ -59,7 +78,7 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
         </button>
       </div>
       <div className={styles.cart__popup__list__item__bottom}>
-        {/* {item.in_stock === 0 ? (
+        {item.in_stock === 0 ? (
           <span className={styles.cart__popup__list__item__empty}>
             Нет на складе
           </span>
@@ -68,20 +87,15 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
             totalCount={item.in_stock}
             partId={item.partId}
             initialCount={item.count}
-            increasePrice={increasePrice}
-            decreasePrice={decreasePrice}
+            increasePrice={incPrice}
+            decreasePrice={decPrice}
           />
-        )} */}
-
-        {item.in_stock === 0 && (
-          <span className={styles.cart__popup__list__item__empty}>
-            Нет на складе
-          </span>
         )}
+
         <span
           className={`${styles.cart__popup__list__item__price} ${darkModeClass}`}
         >
-          {formatPrice(item.price)} P
+          {formatPrice(price)} P
         </span>
       </div>
     </li>
