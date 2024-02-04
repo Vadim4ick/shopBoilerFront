@@ -4,6 +4,11 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Если путь начинается с /api, пропустите middleware
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next()
+  }
+
   const response = await fetch('http://localhost:3000/users/login-check', {
     headers: request.headers,
     credentials: 'include',

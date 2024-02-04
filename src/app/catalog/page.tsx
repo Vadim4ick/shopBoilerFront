@@ -4,7 +4,7 @@ export const metadata = {
   title: 'Каталог',
 }
 
-const PageCatalog = () => {
+const PageCatalog = async () => {
   return <CatalogPage />
 }
 
