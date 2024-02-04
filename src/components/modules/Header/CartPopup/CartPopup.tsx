@@ -11,6 +11,7 @@ import { formatPrice } from '@/utils/common'
 import { IWrapperComponentProps } from '@/types/common'
 import { useUnit } from 'effector-react'
 import {
+  $disableCart,
   $shoppingCart,
   $totalPrice,
   setShoppingCart,
@@ -28,6 +29,7 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
       setShoppingCartFx,
       setTotalPriceFx,
       totalPrice,
+      disableCart,
     ] = useUnit([
       $mode,
       $shoppingCart,
@@ -35,11 +37,10 @@ const CartPopup = forwardRef<HTMLDivElement, IWrapperComponentProps>(
       setShoppingCart,
       setTotalPrice,
       $totalPrice,
+      $disableCart,
     ])
 
     const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
-
-    const disableCart = false
 
     const toggleCartDropDown = () => {
       setOpen(!open)

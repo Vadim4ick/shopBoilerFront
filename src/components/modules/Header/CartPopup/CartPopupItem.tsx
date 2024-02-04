@@ -4,17 +4,14 @@ import DeleteSvg from '@/components/elements/DeleteSvg/DeleteSvg'
 import { IShoppingCartItem } from '../../../../types/shopping-cart'
 import { formatPrice } from '@/utils/common'
 import CartItemCounter from '@/components/elements/CartItemCounter/CartItemCounter'
-// import { usePrice } from '@/hooks/usePrice'
 import styles from '@/styles/cartPopup/index.module.scss'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
 import { useUnit } from 'effector-react'
-import { removeItemFromCart } from '@/utils/shopping-cart'
-import { useEffect, useState } from 'react'
 import {
   removeShoppingCartItem,
   updateCartItemTotalPrice as updateCartItemTotalPriceFx,
 } from '@/context/shopping-cart'
-import { updateTotalPrice } from '@/utils/shopping-cart'
+import { usePrice } from '@/hooks/usePrice'
 
 const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
   const [mode, removeShoppingCartItemFx, updateCartItemTotalPrice] = useUnit([
@@ -23,30 +20,17 @@ const CartPopupItem = ({ item }: { item: IShoppingCartItem }) => {
     updateCartItemTotalPriceFx,
   ])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
-  const [spinner, setSpinner] = useState(false)
-  const [price, setPrice] = useState(item.price)
 
   const spinnerDarkModeClass =
     mode === 'dark' ? '' : `${spinnerStyles.dark_mode}`
 
-  const incPrice = () => {
-    setPrice(price + item.price)
-  }
-  const decPrice = () => setPrice(price - item.price)
-
-  useEffect(() => {
-    setPrice(price * item.count)
-  }, [])
-
-  useEffect(() => {
-    updateTotalPrice(price, item.partId, updateCartItemTotalPrice)
-  }, [price])
-
-  const deleteCartItem = () =>
-    removeItemFromCart(item.partId, setSpinner, removeShoppingCartItemFx)
-
-  // const { price, spinner, decreasePrice, deleteCartItem, increasePrice } =
-  //   usePrice(item.count, item.partId, item.price)
+  const { price, spinner, decPrice, deleteCartItem, incPrice } = usePrice(
+    item.count,
+    item.partId,
+    item.price,
+    updateCartItemTotalPrice,
+    removeShoppingCartItemFx
+  )
 
   return (
     <li className={styles.cart__popup__list__item}>

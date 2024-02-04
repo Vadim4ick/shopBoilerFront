@@ -15,6 +15,7 @@ import { useUnit } from 'effector-react'
 import { IBoilerPart } from '@/types/boilerPart'
 import { toggleCartItem } from '@/utils/shopping-cart'
 import { useState } from 'react'
+import { RemoveFromCartItemFx } from '@/api/shopping-cart/shopping-cart'
 
 const CatalogItem = ({ item }: { item: IBoilerPart }) => {
   const [mode, shoppingCart, removeShoppingCartItemFx, updateShoppingCartFx] =
@@ -24,16 +25,13 @@ const CatalogItem = ({ item }: { item: IBoilerPart }) => {
   const isInCart = shoppingCart.some((cartItem) => cartItem.partId === item.id)
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
-  // const spinner = useStore(removeFromCart.pending)
-
-  const [spinner, setSpinner] = useState(false)
+  const spinner = useUnit(RemoveFromCartItemFx.pending)
 
   const toggleToCart = () =>
     toggleCartItem(
       user.username,
       item.id,
       isInCart,
-      setSpinner,
       removeShoppingCartItemFx,
       updateShoppingCartFx
     )

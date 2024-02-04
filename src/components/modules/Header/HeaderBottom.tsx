@@ -5,26 +5,27 @@ import SearchInput from '@/components/elements/Header/SearchInput'
 import ModeToggler from '@/components/elements/ModeToggler/ModeToggler'
 import CartPopup from './CartPopup/CartPopup'
 import styles from '@/styles/header/index.module.scss'
-import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useMedia } from '@/hooks/useMediaQuery'
 import { useEffect } from 'react'
+import { setDisableCart } from '@/context/shopping-cart'
 
 const HeaderBottom = () => {
   const isMedia950 = useMedia('(max-width: 950px)')
 
-  const [mode] = useUnit([$mode])
+  const [mode, setDisableCartFx] = useUnit([$mode, setDisableCart])
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
-  const router = useRouter()
+  const pathname = usePathname()
 
-  // useEffect(() => {
-  //   // if (router.pathname === '/order') {
-  //   //   setDisableCart(true)
-  //   //   return
-  //   // }
+  useEffect(() => {
+    if (pathname === '/order') {
+      setDisableCartFx(true)
+      return
+    }
 
-  //   // setDisableCart(false)
-  // }, [router])
+    setDisableCartFx(false)
+  }, [pathname])
 
   return (
     <div className={styles.header__bottom}>

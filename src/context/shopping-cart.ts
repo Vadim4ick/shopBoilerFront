@@ -2,6 +2,7 @@ import { IShoppingCartItem } from '@/types/shopping-cart'
 import { createEvent, createStore } from 'effector'
 
 export const setShoppingCart = createEvent<IShoppingCartItem[]>()
+export const setDisableCart = createEvent<boolean>()
 export const setTotalPrice = createEvent<number>()
 
 export const updateShoppingCart = createEvent<IShoppingCartItem>()
@@ -18,6 +19,7 @@ export const updateCartItemCount = createEvent<{
 }>()
 
 export const $shoppingCart = createStore<IShoppingCartItem[]>([])
+export const $disableCart = createStore<boolean>(false)
 
 export const $totalPrice = createStore<number>(0)
 
@@ -63,6 +65,10 @@ $shoppingCart
 
 $totalPrice.on(setTotalPrice, (_, totalPrice) => {
   return totalPrice
+})
+
+$disableCart.on(setDisableCart, (_, value) => {
+  return value
 })
 
 // $totalPrice.watch((counter: number) => {
