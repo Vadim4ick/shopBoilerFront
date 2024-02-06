@@ -6,34 +6,42 @@ import styles from '@/styles/cityButton/index.module.scss'
 import { toast } from 'react-toastify'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
 import { useUnit } from 'effector-react'
+import { $userCity, setUserCity as setUserCityFx } from '@/context/user'
+import { getGeolocationFx } from '@/api/geolocation/geolocation'
 
 const CityButton = () => {
-  const [mode] = useUnit([$mode])
-  // const { city } = useStore($userCity)
-  // const spinner = useStore(getGeolocationFx.pending)
+  const [mode, city, setUserCity] = useUnit([$mode, $userCity, setUserCityFx])
+  const spinner = useUnit(getGeolocationFx.pending)
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 
   const getCity = () => {
-    // const options = {
-    //   enableHighAccuracy: true,
-    //   timeout: 5000,
-    //   maximumAge: 0,
-    // }
-    // const success = async (pos: GeolocationPosition) => {
-    //   try {
-    //     const { latitude, longitude } = pos.coords
-    //     const { data } = await getGeolocationFx({ latitude, longitude })
-    //     setUserCity({
-    //       city: data.features[0].properties.city,
-    //       street: data.features[0].properties.address_line1,
-    //     })
-    //   } catch (error) {
-    //     toast.error((error as Error).message)
-    //   }
-    // }
-    // const error = (error: GeolocationPositionError) =>
-    //   toast.error(`${error.code} ${error.message}`)
-    // navigator.geolocation.getCurrentPosition(success, error, options)
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    }
+
+    const success = async (pos: GeolocationPosition) => {
+      try {
+        const { latitude, longitude } = pos.coords
+        const data = await getGeolocationFx({ latitude, longitude })
+
+        console.log(data)
+
+        setUserCity({
+          city: data.features[0].properties.city,
+          street: data.features[0].properties.address_line1,
+          country: data.features[0].properties.country,
+        })
+      } catch (error) {
+        toast.error((error as Error).message)
+      }
+    }
+
+    const error = (error: GeolocationPositionError) =>
+      toast.error(`${error.code} ${error.message}`)
+
+    navigator.geolocation.getCurrentPosition(success, error, options)
   }
 
   return (
@@ -42,16 +50,16 @@ const CityButton = () => {
         <LocationSvg />
       </span>
       <span className={`${styles.city__text} ${darkModeClass}`}>
-        {/* {spinner ? (
+        {spinner ? (
           <span
             className={spinnerStyles.spinner}
             style={{ top: '-10px', left: 10, width: 20, height: 20 }}
           />
-        ) : city.length ? (
-          city
+        ) : city.city.length ? (
+          city.city
         ) : (
           'Город'
-        )} */}
+        )}
       </span>
     </button>
   )

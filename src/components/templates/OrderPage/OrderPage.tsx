@@ -10,7 +10,7 @@ import {
 } from '@/context/shopping-cart'
 import { formatPrice } from '@/utils/common'
 import { $mode } from '@/context/mode'
-import { $user } from '@/context/user'
+import { $user, $userCity } from '@/context/user'
 import styles from '@/styles/order/index.module.scss'
 import spinnerStyles from '@/styles/spinner/index.module.scss'
 import { useUnit } from 'effector-react'
@@ -19,13 +19,12 @@ import OrderAccordion from '@/components/modules/OrderPage/OrderAccordion'
 import { checkPaymentFx, makePaymentFx } from '@/api/payment/payment'
 
 const PageOrder = () => {
-  const [mode, user, shoppingCart, totalPrice, setShoppingCartFx] = useUnit([
+  const [mode, user, userCity, shoppingCart, totalPrice] = useUnit([
     $mode,
     $user,
-    // $userCity,
+    $userCity,
     $shoppingCart,
     $totalPrice,
-    setShoppingCart,
   ])
 
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
@@ -49,11 +48,11 @@ const PageOrder = () => {
       const data = await makePaymentFx({
         url: '/payment',
         amount: totalPrice,
-        // description: `Заказ №1 ${
-        //   userCity.city.length
-        //     ? `Город: ${userCity.city}, улица: ${userCity.street}`
-        //     : ''
-        // }`,
+        description: `Заказ №1 ${
+          userCity.city.length
+            ? `Город: ${userCity.city}, улица: ${userCity.street}, страна: ${userCity.country}`
+            : ''
+        }`,
       })
 
       sessionStorage.setItem('paymentId', data.id)
