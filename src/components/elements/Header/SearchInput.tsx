@@ -22,9 +22,20 @@ import {
 import styles from '@/styles/header/index.module.scss'
 import { useUnit } from 'effector-react'
 import { IOption, SelectOptionType } from '@/types/common'
+import {
+  $searchInputZIndex,
+  setSearchInputZIndex as setSearchInputZIndexFx,
+} from '@/context/header'
+import { useDebounce } from '@/hooks/useDebounce'
+import { GetPartByNameFx, searchPartsFx } from '@/api/boilerParts/boilerParts'
+import { IBoilerPart } from '@/types/boilerPart'
 
 const SearchInput = () => {
-  const [mode] = useUnit([$mode])
+  const [mode, setSearchInputZIndex, zIndex] = useUnit([
+    $mode,
+    setSearchInputZIndexFx,
+    $searchInputZIndex,
+  ])
   const [searchOption, setSearchOption] = useState<SelectOptionType>(null)
 
   const [onMenuOpenControlStyles, setOnMenuOpenControlStyles] = useState({})
@@ -34,8 +45,8 @@ const SearchInput = () => {
   const borderRef = useRef() as MutableRefObject<HTMLSpanElement>
   const [options, setOptions] = useState([])
   const [inputValue, setInputValue] = useState('')
-  // const delayCallback = useDebounceCallback(1000)
-  // const spinner = useStore(searchPartsFx.pending)
+  const delayCallback = useDebounce(300)
+  const spinner = useUnit(searchPartsFx.pending)
   const router = useRouter()
 
   const handleSearchOptionChange = (selectedOption: SelectOptionType) => {
@@ -44,104 +55,107 @@ const SearchInput = () => {
       return
     }
 
-    // const name = (selectedOption as IOption)?.value as string
+    const name = (selectedOption as IOption)?.value as string
 
-    // if (name) {
-    //   getPartAndRedirect(name)
-    // }
+    if (name) {
+      getPartAndRedirect(name)
+    }
 
     setSearchOption(selectedOption)
-    // removeClassNamesForOverlayAndBody()
+    removeClassNamesForOverlayAndBody()
   }
 
-  // const onFocusSearch = () => {
-  //   toggleClassNamesForOverlayAndBody('open-search')
-  //   setSearchInputZIndex(100)
-  // }
+  const onFocusSearch = () => {
+    toggleClassNamesForOverlayAndBody('open-search')
+    setSearchInputZIndex(100)
+  }
 
-  // const handleSearchClick = async () => {
-  //   if (!inputValue) {
-  //     return
-  //   }
+  const handleSearchClick = async () => {
+    if (!inputValue) {
+      return
+    }
 
-  //   getPartAndRedirect(inputValue)
-  // }
+    getPartAndRedirect(inputValue)
+  }
 
-  // const searchPart = async (search: string) => {
-  //   try {
-  //     setInputValue(search)
-  //     const data = await searchPartsFx({
-  //       url: '/boiler-parts/search',
-  //       search,
-  //     })
+  const getPartAndRedirect = async (name: string) => {
+    const part = await GetPartByNameFx({
+      url: '/boiler-parts/name',
+      name,
+    })
 
-  //     const names = data
-  //       .map((item: IBoilerPart) => item.name)
-  //       .map(createSelectOption)
+    if (!part.id) {
+      toast.warning('Товар не найден.')
+      return
+    }
 
-  //     setOptions(names)
-  //   } catch (error) {
-  //     toast.error((error as Error).message)
-  //   }
-  // }
+    router.push(`/catalog/${part.id}`)
+  }
 
-  // const getPartAndRedirect = async (name: string) => {
-  //   const part = await getPartByNameFx({
-  //     url: '/boiler-parts/name',
-  //     name,
-  //   })
+  const onSearchInputChange = (text: string) => {
+    document.querySelector('.overlay')?.classList.add('open-search')
+    document.querySelector('.body')?.classList.add('overflow-hidden')
 
-  //   if (!part.id) {
-  //     toast.warning('Товар не найден.')
-  //     return
-  //   }
+    delayCallback(() => searchPart(text))
+    searchPart(text)
+  }
 
-  //   router.push(`/catalog/${part.id}`)
-  // }
+  const searchPart = async (search: string) => {
+    try {
+      setInputValue(search)
 
-  // const onSearchInputChange = (text: string) => {
-  //   document.querySelector('.overlay')?.classList.add('open-search')
-  //   document.querySelector('.body')?.classList.add('overflow-hidden')
+      const data = await searchPartsFx({
+        url: '/boiler-parts/search',
+        search,
+      })
 
-  //   delayCallback(() => searchPart(text))
-  // }
+      const names = data.rows
+        .map((item: IBoilerPart) => item.name)
+        .map(createSelectOption)
 
-  // const onSearchMenuOpen = () => {
-  //   setOnMenuOpenControlStyles({
-  //     borderBottomLeftRadius: 0,
-  //     border: 'none',
-  //   })
-  //   setOnMenuOpenContainerStyles({
-  //     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-  //   })
+      setOptions(names)
+    } catch (error) {
+      toast.error((error as Error).message)
+    }
+  }
 
-  //   btnRef.current.style.border = 'none'
-  //   btnRef.current.style.borderBottomRightRadius = '0'
-  //   borderRef.current.style.display = 'block'
-  // }
+  const onSearchMenuOpen = () => {
+    setOnMenuOpenControlStyles({
+      borderBottomLeftRadius: 0,
+      border: 'none',
+    })
+    setOnMenuOpenContainerStyles({
+      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    })
 
-  // const onSearchMenuClose = () => {
-  //   setOnMenuOpenControlStyles({
-  //     borderBottomLeftRadius: 4,
-  //     boxShadow: 'none',
-  //     border: '1px solid #9e9e9e',
-  //   })
-  //   setOnMenuOpenContainerStyles({
-  //     boxShadow: 'none',
-  //   })
+    btnRef.current.style.border = 'none'
+    btnRef.current.style.borderBottomRightRadius = '0'
+    borderRef.current.style.display = 'block'
+  }
 
-  //   btnRef.current.style.border = '1px solid #9e9e9e'
-  //   btnRef.current.style.borderLeft = 'none'
-  //   btnRef.current.style.borderBottomRightRadius = '4px'
-  //   borderRef.current.style.display = 'none'
-  // }
+  const onSearchMenuClose = () => {
+    setOnMenuOpenControlStyles({
+      borderBottomLeftRadius: 4,
+      boxShadow: 'none',
+      border: '1px solid #9e9e9e',
+    })
+    setOnMenuOpenContainerStyles({
+      boxShadow: 'none',
+    })
+
+    btnRef.current.style.border = '1px solid #9e9e9e'
+    btnRef.current.style.borderLeft = 'none'
+    btnRef.current.style.borderBottomRightRadius = '4px'
+    borderRef.current.style.display = 'none'
+  }
+
   return (
     <>
       <div className={styles.header__search__inner}>
         <Select
-          // components={{
-          //   NoOptionsMessage: spinner ? NoOptionsSpinner : NoOptionsMessage,
-          // }}
+          components={{
+            NoOptionsMessage: spinner ? NoOptionsSpinner : NoOptionsMessage,
+          }}
           placeholder="Я ищу..."
           value={searchOption}
           onChange={handleSearchOptionChange}
@@ -154,7 +168,7 @@ const SearchInput = () => {
             control: (defaultStyles) => ({
               ...controlStyles(defaultStyles, mode),
               backgroundColor: mode === 'dark' ? '#2d2d2d' : '#ffffff',
-              // zIndex,
+              zIndex,
               transition: 'none',
               ...onMenuOpenControlStyles,
             }),
@@ -164,7 +178,7 @@ const SearchInput = () => {
             }),
             menu: (defaultStyles) => ({
               ...menuStyles(defaultStyles, mode),
-              // zIndex,
+              zIndex,
               marginTop: '-1px',
             }),
             option: (defaultStyles, state) => ({
@@ -173,10 +187,10 @@ const SearchInput = () => {
           }}
           isClearable={true}
           openMenuOnClick={false}
-          // onFocus={onFocusSearch}
-          // onMenuOpen={onSearchMenuOpen}
-          // onMenuClose={onSearchMenuClose}
-          // onInputChange={onSearchInputChange}
+          onFocus={onFocusSearch}
+          onMenuOpen={onSearchMenuOpen}
+          onMenuClose={onSearchMenuClose}
+          onInputChange={onSearchInputChange}
           options={options}
         />
         <span ref={borderRef} className={styles.header__search__border} />
@@ -184,8 +198,8 @@ const SearchInput = () => {
       <button
         className={`${styles.header__search__btn} ${darkModeClass}`}
         ref={btnRef}
-        // style={{ zIndex }}
-        // onClick={handleSearchClick}
+        style={{ zIndex }}
+        onClick={handleSearchClick}
       >
         <span className={styles.header__search__btn__span}>
           <SearchSvg />

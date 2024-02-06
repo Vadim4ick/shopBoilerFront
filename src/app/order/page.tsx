@@ -5,7 +5,11 @@ export const metadata = {
 }
 
 const OrderPage = () => {
-  return <PageOrder />
+  return (
+    <>
+      <PageOrder />
+    </>
+  )
 }
 
 export default OrderPage

@@ -9,7 +9,6 @@ const PageDashboard = () => {
   return (
     <>
       <DashboardPage />
-      <div className="overlay"></div>
     </>
   )
 }

@@ -8,7 +8,6 @@ const PageAbout = () => {
   return (
     <>
       <AboutPage />
-      <div className="overlay" />
     </>
   )
 }

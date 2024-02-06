@@ -8,7 +8,6 @@ const ShippingPaymentPage = () => {
   return (
     <>
       <ShippingPayment />
-      <div className="overlay" />
     </>
   )
 }

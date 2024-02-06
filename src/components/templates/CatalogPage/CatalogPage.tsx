@@ -29,6 +29,7 @@ import ReactPaginate from 'react-paginate'
 import FilterSelect from '@/components/modules/CatalogPage/FilterSelect'
 import { usePopup } from '@/hooks/usePopup'
 import { checkQueryParams } from '@/utils/catalog'
+import { setSearchInputZIndex as setSearchInputZIndexFx } from '@/context/header'
 
 const CatalogPage = () => {
   const [
@@ -42,6 +43,7 @@ const CatalogPage = () => {
     setBoilerManufacturers,
     setPartManufacturers,
     filteredBoilerParts,
+    setSearchInputZIndex,
   ] = useUnit([
     $mode,
     $boilerParts,
@@ -53,6 +55,7 @@ const CatalogPage = () => {
     setBoilerManufacturersFx,
     setPartManufacturersFx,
     $filtredBoilerPart,
+    setSearchInputZIndexFx,
   ])
 
   const searchParams = useSearchParams()
@@ -95,7 +98,7 @@ const CatalogPage = () => {
     isAnyBoilerManufacturerChecked ||
     isAnyPartsManufacturerChecked
   )
-  const { toggleOpen, open, closePopup } = usePopup()
+  const { toggleOpen, open, closePopup } = usePopup(setSearchInputZIndex)
 
   useEffect(() => {
     loadBoilerParts()

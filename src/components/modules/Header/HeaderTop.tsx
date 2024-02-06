@@ -7,12 +7,13 @@ import { $mode } from '@/context/mode'
 import styles from '@/styles/header/index.module.scss'
 import { useMedia } from '@/hooks/useMediaQuery'
 import { usePopup } from '@/hooks/usePopup'
+import { setSearchInputZIndex as setSearchInputZIndexFx } from '@/context/header'
 
 const HeaderTop = () => {
   const isMedia950 = useMedia('(max-width: 950px)')
-  const { toggleOpen, open, closePopup } = usePopup()
+  const [mode, setSearchInputZIndex] = useUnit([$mode, setSearchInputZIndexFx])
 
-  const [mode] = useUnit([$mode])
+  const { toggleOpen, open, closePopup } = usePopup(setSearchInputZIndex)
 
   const darkModeClass = mode === 'dark' ? `${styles.dark_mode}` : ''
 

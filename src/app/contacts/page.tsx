@@ -8,7 +8,6 @@ const PageContacts = () => {
   return (
     <>
       <ContactsPage />
-      <div className="overlay" />
     </>
   )
 }

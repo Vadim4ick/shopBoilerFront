@@ -38,6 +38,8 @@ function RootLayout({
           </EffectorNext>
 
           <ToastContainer />
+
+          <div className="overlay" />
         </body>
       </html>
     </>
