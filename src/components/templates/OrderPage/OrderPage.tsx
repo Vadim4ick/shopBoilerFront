@@ -70,8 +70,6 @@ const PageOrder = () => {
         paymentId,
       })
 
-      console.log(user.userId)
-
       if (data.status === 'succeeded' && user.userId) {
         await RemoveFromCartItemFx(`/shopping-cart/all/${user.userId}`)
         sessionStorage.removeItem('paymentId')

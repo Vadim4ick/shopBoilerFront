@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@effector/next": "^0.7.0",
+    "@emailjs/browser": "^4.1.0",
     "@types/nookies": "^2.0.3",
     "@types/react-slick": "^0.23.13",
     "@typescript-eslint/typescript-estree": "^6.19.1",
@@ -18,6 +19,7 @@
     "effector": "^23.1.0",
     "effector-next": "^1.3.3",
     "effector-react": "^23.1.0",
+    "emailjs": "^4.0.3",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "framer-motion": "^11.0.3",
