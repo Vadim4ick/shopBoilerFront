@@ -4,8 +4,7 @@ import { createEffect } from 'effector'
 
 export const makePaymentFx = createEffect(
   async ({ url, amount, description }: IMakePayFx) => {
-    const { data } = await $api.post(url, { amount })
-
+    const { data } = await $api.post(url, { amount, description })
     return data
   }
 )

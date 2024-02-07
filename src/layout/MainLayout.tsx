@@ -1,5 +1,6 @@
 'use client'
 
+import { NextBreadcrumb } from '@/components/modules/Breadcrumbs/Breadcrumbs'
 import Footer from '@/components/modules/Footer/Footer'
 import Header from '@/components/modules/Header/Header'
 import { usePathname } from 'next/navigation'
@@ -11,6 +12,8 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {pathname !== '/' && <Header />}
+
+      <NextBreadcrumb />
 
       {children}
 

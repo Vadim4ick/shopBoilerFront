@@ -9,18 +9,27 @@ import { useUnit } from 'effector-react'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import PagePart from './PagePart'
+import { setBreadcrumbName as setBreadcrumbNameFx } from '@/context/breadcrumbsPath'
 
 const PartPage = ({ id }: { id: string }) => {
-  const [boilerPart, setBoilerPart] = useUnit([$boilerPart, setBoilerPartFx])
+  const [setBoilerPart, setBreadcrumbName] = useUnit([
+    setBoilerPartFx,
+    setBreadcrumbNameFx,
+  ])
 
   useEffect(() => {
     loadBoilerPart()
+
+    return () => {
+      setBreadcrumbName(null)
+    }
   }, [])
 
   const loadBoilerPart = async () => {
     try {
       const data = await GetBoilerPartFx(`/boiler-parts/find/${id}`)
       setBoilerPart(data)
+      setBreadcrumbName(data.name)
     } catch (error) {
       toast.error((error as Error).message)
     }
@@ -28,13 +37,6 @@ const PartPage = ({ id }: { id: string }) => {
 
   return (
     <>
-      {/* <Breadcrumbs
-        getDefaultTextGenerator={getDefaultTextGenerator}
-        getTextGenerator={getTextGenerator}
-      />
-
-     */}
-
       <PagePart />
     </>
   )

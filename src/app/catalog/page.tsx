@@ -5,7 +5,11 @@ export const metadata = {
 }
 
 const PageCatalog = async () => {
-  return <CatalogPage />
+  return (
+    <>
+      <CatalogPage />
+    </>
+  )
 }
 
 export default PageCatalog
