@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const response = await fetch('http://localhost:3000/users/login-check', {
+  const response = await fetch(`http://node:3000/users/login-check`, {
     headers: request.headers,
     credentials: 'include',
   })

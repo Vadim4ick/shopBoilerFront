@@ -13,7 +13,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     <>
       {pathname !== '/' && <Header />}
 
-      <NextBreadcrumb />
+      {pathname !== '/' && <NextBreadcrumb />}
 
       {children}
 
